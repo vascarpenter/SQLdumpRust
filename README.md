@@ -1,23 +1,25 @@
 ## SQLdumpRust
 
-### これはなんですか
-- SQLdumpRustは、Go版の SQLbackup の代替品です
-- テーブルをテキストのSQL形式で書き出します
+### What is it?
+- SQLdumpRust is utility for dump/back up oracle database tables
+- written in Rust
+- output SQL, stdout
 
-### ビルド
+### How to build
 - `cargo build`
+  - you must install oracle instant client library
 
-### 制約
-- サポートしているoracle typeは以下の通りです
+### Limitations
+- supported  oracle types are below:
   - `NVARCHAR2, VARCHAR2, NVARCHAR`
   - `NUMBER`
   - `DATE`
   - `BLOB`
-  - その他の型はサポートしていないので自分で追加するべき
+  - other types? you can add it..
 
-### 起動オプション
-- `SQLdumpRust --dbenv <環境変数> / --ocistring <connect string> [--drop] [--tables table1,table2,..]`
-- `--dbenv <環境変数>` あるいは `--ocistring <接続文字列>` dbへの接続方法を指定
-- `--drop`  `DROP TABLE `を追加する
-- `--tables <table1,table2,...>` dumpするテーブルを指定
-
+### Launch options
+- `SQLdumpRust --dbenv <env var name> ` or `--ocistring <connect string> [--drop] [--tables table1,table2,..]`
+- `--dbenv <environment variable name that holds connection string>`
+  -  or `--ocistring <connect string>` specify connection settings
+- `--drop`  `DROP TABLE ` before create table
+- `--tables <table1,table2,...>` specify table name, if not specified, dump all tables
