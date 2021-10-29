@@ -1,3 +1,5 @@
+#[allow(non_snake_case)]
+
 use std::sync::{Arc, Mutex};
 use r2d2_oracle::OracleConnectionManager;
 use r2d2_oracle::r2d2::PooledConnection;
@@ -70,7 +72,7 @@ fn table_analysis(tablename: &String,
         print!("Insert Into {} (",table);
 
         let sqlv = row.sql_values().to_owned();
-        for (colidx,val) in sqlv.iter().enumerate() {
+        for (colidx,_) in sqlv.iter().enumerate() {
             if colidx > 0 {
                 print!(",");
             }
@@ -105,7 +107,7 @@ fn table_analysis(tablename: &String,
         }
         println!(");");
     }
-
+    println!("");
 }
 
 // oracle形式の connection string を分解して、username,password,connect stringの形式にする
