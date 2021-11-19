@@ -13,7 +13,7 @@
 ### 制約
 - サポートしているoracle typeは以下の通りです
     - `NVARCHAR2, VARCHAR2, NVARCHAR`
-    - `NUMBER`
+    - `NUMBER, FLOAT`
     - `DATE`
     - `BLOB`
     - その他の型はサポートしていないので自分で追加するべき
@@ -23,4 +23,3 @@
 - `--dbenv <環境変数>` あるいは `--ocistring <接続文字列>` dbへの接続方法を指定
 - `--drop`  `DROP TABLE `を追加する
 - `--tables <table1,table2,...>` dumpするテーブルを指定
-

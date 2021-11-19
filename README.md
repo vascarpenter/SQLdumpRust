@@ -12,7 +12,7 @@
 ### Limitations
 - supported  oracle types are below:
   - `NVARCHAR2, VARCHAR2, NVARCHAR`
-  - `NUMBER`
+  - `NUMBER, FLOAT`
   - `DATE`
   - `BLOB`
   - other types? you can add it..

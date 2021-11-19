@@ -1,5 +1,4 @@
 #[allow(non_snake_case)]
-
 use std::sync::{Arc, Mutex};
 use r2d2_oracle::OracleConnectionManager;
 use r2d2_oracle::r2d2::PooledConnection;
@@ -35,7 +34,7 @@ pub struct AppState {
 
 fn table_analysis(tablename: &String,
                   conn: &PooledConnection<OracleConnectionManager>,
-                 globals: Arc<Mutex<AppState>>,
+                  globals: Arc<Mutex<AppState>>,
 )
 {
     let table = tablename.to_string();
@@ -52,34 +51,33 @@ fn table_analysis(tablename: &String,
 
     // DDL の中に INDEX PKがあるものがあり、"ALTER TABLE "ADMIN"."XXX" ADD PRIMARY KEY" の前にセミコロンがない→つける
 
-    ddl = ddl.replace(" \nALTER TABLE ",";\nALTER TABLE ");
-    ddl = ddl.replace(" \n  CREATE UNIQUE INDEX",";\nCREATE UNIQUE INDEX");
+    ddl = ddl.replace(" \nALTER TABLE ", ";\nALTER TABLE ");
+    ddl = ddl.replace(" \n  CREATE UNIQUE INDEX", ";\nCREATE UNIQUE INDEX");
 
     if globals.lock().unwrap().drop == true {
-        println!("DROP TABLE {};",table);
+        println!("DROP TABLE {};", table);
     }
-    println!("{}",ddl);
+    println!("{}", ddl);
 
     let sql = format!("select * from {}", table);
-    let rows = conn.query(sql.as_str(),&[]).expect("query err");
+    let rows = conn.query(sql.as_str(), &[]).expect("query err");
     let column_info = rows.column_info().to_owned(); // loop内で使用されるため cloneしておく必要がある
 
     println!("SET DEFINE OFF;");
 
     for row_result in rows {
-
         let row = row_result.unwrap();
-        print!("Insert Into {} (",table);
+        print!("Insert Into {} (", table);
 
         let sqlv = row.sql_values().to_owned();
-        for (colidx,_) in sqlv.iter().enumerate() {
+        for (colidx, _) in sqlv.iter().enumerate() {
             if colidx > 0 {
                 print!(",");
             }
-            print!(r##""{}""##,column_info[colidx].name());
+            print!(r##""{}""##, column_info[colidx].name());
         }
         print!(") VALUES (");
-        for (colidx,val) in sqlv.iter().enumerate() {
+        for (colidx, val) in sqlv.iter().enumerate() {
             if colidx > 0 {
                 print!(",");
             }
@@ -91,7 +89,8 @@ fn table_analysis(tablename: &String,
                     || oratype.starts_with("VARCHAR2")
                     || oratype.starts_with("NVARCHAR") {
                     print!("'{}'", val.to_string());
-                } else if oratype.starts_with("NUMBER") {
+                } else if oratype.starts_with("NUMBER")
+                    || oratype.starts_with("FLOAT") {
                     print!("{}", val.to_string());
                 } else if oratype.starts_with("DATE") {
                     print!("TO_DATE('{}','YYYY-MM-DD HH24:MI:SS')", val.to_string());
@@ -112,7 +111,7 @@ fn table_analysis(tablename: &String,
 
 // oracle形式の connection string を分解して、username,password,connect stringの形式にする
 
-fn divide_ocistring(ocistring: String)-> Vec<String>
+fn divide_ocistring(ocistring: String) -> Vec<String>
 {
     let mut v = Vec::new();
     let atmarksep: Vec<&str> = ocistring.split("@").collect();
@@ -163,8 +162,7 @@ fn main() {
         for table in tablenames {
             table_analysis(&table.to_string(), &conn, data.clone());
         }
-    }
-    else {
+    } else {
         // select all tables
         let sql = "select table_name from user_tables";
         let rows = conn.query_as::<String>(sql, &[]).expect("fail query");
